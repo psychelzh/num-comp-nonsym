@@ -1,35 +1,38 @@
 library(tidyverse)
 
 # this function is used to determine the real set size from the ratio input
-prepare_set_size <- function(small_set, big_set, min_size = 4, max_size = 15) {
+prepare_dot_count <- function(small_set, big_set, range_dot_count = c(4, 15)) {
   repeat {
-    small_set_size <- round(runif(1, min_size, max_size))
-    big_set_size <- small_set_size * (big_set / small_set)
-    if (big_set_size %% 1 == 0 && (big_set_size >= min_size && big_set_size <= max_size))
+    small_set_count <- round(runif(1, range_dot_count[1], range_dot_count[2]))
+    big_set_count <- small_set_count * (big_set / small_set)
+    if (big_set_count %% 1 == 0 && (big_set_count >= range_dot_count[1] && big_set_count <= range_dot_count[2]))
       break
   }
-  list(small_set_size = small_set_size, big_set_size = big_set_size)
+  list(small_set_count = small_set_count, big_set_count = big_set_count)
 }
 
 # this function is used to generate the final stimuli config for each
-prepare_stim_base <- function(small_set_size, big_set_size, min_pixel = 10, max_pixel = 25) {
-  n_stims <- small_set_size + big_set_size
+prepare_stim_base <- function(small_set_count, big_set_count,
+                              range_dot_size = c(10, 25),
+                              range_position = c(1920, 1080),
+                              margin = 100) {
+  n_dots <- small_set_count + big_set_count
   repeat {
-    small_set_pixel <- round(runif(small_set_size, min_pixel, max_pixel))
-    big_set_pixel <- round(runif(big_set_size, min_pixel, max_pixel))
+    small_set_size <- round(runif(small_set_count, range_dot_size[1], range_dot_size[2]))
+    big_set_size <- round(runif(big_set_count, range_dot_size[1], range_dot_size[2]))
     # make sure the surface area are equal
-    if (sum(small_set_pixel ^ 2) == sum(big_set_pixel ^ 2))
+    if (sum(small_set_size ^ 2) == sum(big_set_size ^ 2))
       break
   }
   repeat {
     stims <- tibble(
-      id = 1:n_stims,
-      size = c(small_set_pixel, big_set_pixel),
-      set = c(rep("small", small_set_size), rep("big", big_set_size))
+      id = 1:n_dots,
+      size = c(small_set_size, big_set_size),
+      set = c(rep("small", small_set_count), rep("big", big_set_count))
     ) %>%
       mutate(
-        position_x = round(runif(n_stims, 100, 1820)),
-        position_y = round(runif(n_stims, 100, 980))
+        position_x = round(runif(n_dots, margin, range_position[1] - margin)),
+        position_y = round(runif(n_dots, margin, range_position[2] - margin))
       )
     pairs <- as_tibble(t(combn(stims$id, 2)), .name_repair = ~c("from", "to")) %>%
       mutate(
@@ -52,29 +55,32 @@ prepare_stim_base <- function(small_set_size, big_set_size, min_pixel = 10, max_
   stims
 }
 
-config_stim <- readxl::read_excel("config_stim.xlsx")
+configs <- jsonlite::fromJSON("config.json", simplifyVector = TRUE)
 set.seed(20190721)
-set_stim <- config_stim %>%
+set_stim <- configs$base_stim %>%
   mutate(
-    set_size = pmap(
+    set_count = pmap(
       .,
       function(small_set, big_set, count) {
         replicate(
-          count, prepare_set_size(small_set, big_set),
+          count, prepare_dot_count(small_set, big_set, configs$range_dot_count),
           simplify = FALSE
         ) %>%
           bind_rows()
       }
     )
   ) %>%
-  unnest(set_size) %>%
+  unnest(set_count) %>%
   select(-count) %>%
   mutate(type = if_else(row_number(small_set) %% 2 == 1, "rb", "br")) %>%
   mutate(
     stim = pmap_chr(
       .,
-      function(small_set_size, big_set_size, type, ...) {
-        prepare_stim_base(small_set_size, big_set_size) %>%
+      function(small_set_count, big_set_count, type, ...) {
+        prepare_stim_base(
+          small_set_count, big_set_count,
+          configs$range_dot_size, configs$range_position
+        ) %>%
           mutate(
             color = case_when(
               type == "rb" ~ if_else(set == "small", "r", "b"),

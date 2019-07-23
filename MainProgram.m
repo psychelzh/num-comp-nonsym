@@ -1,4 +1,5 @@
-% setup stimuli
+% preparation works
+configs = jsondecode(fileread('config.json'));
 config_stim = readtable('config_stim.txt');
 config_stim.stim = cellfun(...
     @(x) struct2table(jsondecode(x)), config_stim.stim, ...
@@ -26,7 +27,7 @@ for i_stim = 1:n_stim
     end
     Screen('FillOval', window_ptr, color_dots, rect_dots);
     Screen(window_ptr, 'Flip');
-    image_array = Screen('GetImage', window_ptr);
+    image_array = Screen('GetImage', window_ptr, [0, 0, configs.range_position(1), configs.range_position(2)]);
     imwrite(image_array, fullfile('images', sprintf('%02d.jpg', i_stim)))
 end
 sca;

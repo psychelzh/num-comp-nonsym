@@ -1,0 +1,27 @@
+{
+    "base_stim": [
+        {
+            "big_set": 1,
+            "small_set": 2,
+            "count": 20
+        },
+        {
+            "big_set": 2,
+            "small_set": 3,
+            "count": 20
+        },
+        {
+            "big_set": 3,
+            "small_set": 4,
+            "count": 20
+        },
+        {
+            "big_set": 6,
+            "small_set": 7,
+            "count": 20
+        }
+    ],
+    "range_position": [1320, 880],
+    "range_dot_count": [4, 15],
+    "range_dot_size": [10, 25]
+}
