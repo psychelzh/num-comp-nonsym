@@ -28,6 +28,6 @@ for i_stim = 1:n_stim
     Screen('FillOval', window_ptr, color_dots, rect_dots);
     Screen(window_ptr, 'Flip');
     image_array = Screen('GetImage', window_ptr, [0, 0, configs.range_position(1), configs.range_position(2)]);
-    imwrite(image_array, fullfile('images', sprintf('%02d.jpg', i_stim)))
+    imwrite(image_array, fullfile('images', this_stimuli.pic_file))
 end
 sca;
