@@ -49,7 +49,7 @@ prepare_stim_base <- function(small_set_count, big_set_count,
         )
       )
     # make sure the distance between each pair of dot is large enough
-    if (all(pairs$dist_real > pairs$dist_min + 10))
+    if (all(pairs$dist_real > pairs$dist_min + 5))
       break
   }
   stims
@@ -58,10 +58,11 @@ prepare_stim_base <- function(small_set_count, big_set_count,
 configs <- jsonlite::fromJSON("config.json", simplifyVector = TRUE)
 set.seed(20190721)
 set_stim <- configs$base_stim %>%
+  bind_rows(.id = "phase") %>%
   mutate(
     set_count = pmap(
       .,
-      function(small_set, big_set, count) {
+      function(small_set, big_set, count, ...) {
         replicate(
           count, prepare_dot_count(small_set, big_set, configs$range_dot_count),
           simplify = FALSE
@@ -72,7 +73,18 @@ set_stim <- configs$base_stim %>%
   ) %>%
   unnest(set_count) %>%
   select(-count) %>%
-  mutate(type = if_else(row_number(small_set) %% 2 == 1, "rb", "br")) %>%
+  add_column(id = 1:nrow(.), .before = 1L) %>%
+  group_by(phase) %>%
+  mutate(
+    file_pre = if_else(phase == "practice", "p", ""),
+    file_suf = row_number(phase)
+  ) %>%
+  ungroup() %>%
+  mutate(
+    pic_file = sprintf("%s%02d.%s", file_pre, file_suf, configs$format),
+    type = if_else(id %% 2 == 1, "rb", "br")
+  ) %>%
+  select(-starts_with("file")) %>%
   mutate(
     stim = pmap_chr(
       .,
