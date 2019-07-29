@@ -49,7 +49,7 @@ prepare_stim_base <- function(small_set_count, big_set_count,
         )
       )
     # make sure the distance between each pair of dot is large enough
-    if (all(pairs$dist_real > pairs$dist_min + 10))
+    if (all(pairs$dist_real > pairs$dist_min + 5))
       break
   }
   stims
