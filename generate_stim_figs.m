@@ -9,7 +9,8 @@ PsychDefaultSetup(2)
 window_ptr = PsychImaging('OpenWindow', 0, WhiteIndex(0));
 n_stim = height(config_stim);
 for i_stim = 1:n_stim
-    this_stimuli = config_stim.stim{i_stim};
+    this_config = config_stim(i_stim, :);
+    this_stimuli = this_config.stim{:};
     n_dots = height(this_stimuli);
     rect_dots = nan(4, n_dots);
     color_dots = nan(3, n_dots);
@@ -28,6 +29,6 @@ for i_stim = 1:n_stim
     Screen('FillOval', window_ptr, color_dots, rect_dots);
     Screen(window_ptr, 'Flip');
     image_array = Screen('GetImage', window_ptr, [0, 0, configs.range_position(1), configs.range_position(2)]);
-    imwrite(image_array, fullfile('images', this_stimuli.pic_file))
+    imwrite(image_array, fullfile('images', this_config.pic_file{:}))
 end
 sca;
