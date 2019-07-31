@@ -2,36 +2,66 @@
     "base_stim": {
         "practice": [
             {
-                "big_set": 3,
-                "small_set": 2,
-                "count": 2
+                "big_set": 12,
+                "small_set": 6,
+                "count": 1
             },
             {
-                "big_set": 4,
-                "small_set": 3,
-                "count": 2
+                "big_set": 14,
+                "small_set": 7,
+                "count": 1
+            },
+            {
+                "big_set": 9,
+                "small_set": 6,
+                "count": 1
+            },
+            {
+                "big_set": 12,
+                "small_set": 8,
+                "count": 1
             }
         ],
         "test": [
             {
-                "big_set": 2,
-                "small_set": 1,
-                "count": 20
+                "big_set": 12,
+                "small_set": 6,
+                "count": 10
             },
             {
-                "big_set": 3,
-                "small_set": 2,
-                "count": 20
+                "big_set": 14,
+                "small_set": 7,
+                "count": 10
             },
             {
-                "big_set": 4,
-                "small_set": 3,
-                "count": 20
+                "big_set": 9,
+                "small_set": 6,
+                "count": 10
+            },
+            {
+                "big_set": 12,
+                "small_set": 8,
+                "count": 10
+            },
+            {
+                "big_set": 8,
+                "small_set": 6,
+                "count": 10
+            },
+            {
+                "big_set": 12,
+                "small_set": 9,
+                "count": 10
             },
             {
                 "big_set": 7,
                 "small_set": 6,
-                "count": 20
+                "count": 10
+            },
+            {
+                "big_set": 14,
+                "small_set": 12,
+                "count": 10
             }
         ]
     },
