@@ -60,11 +60,14 @@ config_stim_base <- configs$base_stim %>%
     pic_file = sprintf("%s%02d.%s", file_pre, file_suf, configs$format),
     type = if_else(id %% 2 == 1, "rb", "br")
   ) %>%
-  select(-starts_with("file")) %>%
+  select(-starts_with("file"))
+pb <- progress_estimated(nrow(config_stim_base))
+config_stim <- config_stim_base %>%
   mutate(
     stim = pmap_chr(
       .,
       function(small_set, big_set, type, ...) {
+        pb$tick()$print()
         prepare_stim_base(
           small_set, big_set,
           configs$range_dot_size, configs$range_position
@@ -80,4 +83,4 @@ config_stim_base <- configs$base_stim %>%
       }
     )
   )
-write_tsv(set_stim, "config_stim.txt")
+write_tsv(config_stim, "tmp/config_stim.txt")
