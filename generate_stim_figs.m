@@ -1,6 +1,6 @@
 % preparation works
 configs = jsondecode(fileread('config.json'));
-config_stim = readtable('config_stim.txt');
+config_stim = readtable(fullfile('tmp', 'config_stim.txt'));
 config_stim.stim = cellfun(...
     @(x) struct2table(jsondecode(x)), config_stim.stim, ...
     'UniformOutput', false);
